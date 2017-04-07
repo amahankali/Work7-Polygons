@@ -88,25 +88,139 @@ void add_box( struct matrix * edges,
 	      double x, double y, double z,
 	      double width, double height, double depth ) {
 
-  double x0, y0, z0, x1, y1, z1;
-  x0 = x;
-  x1 = x+width;
-  y0 = y;
-  y1 = y-height;
-  z0 = z;
-  z1 = z-depth;
+  double xA, yA, zA, xB, yB, zB;
+  xA = x;
+  xB = x + width;
+  yA = y;
+  yB = y - height;
+  zA = z;
+  zB = z - depth;
 
-  //front
-  add_edge(edges, x0, y0, z0, x0+2, y0+2, z0+2);
-  add_edge(edges, x1, y0, z0, x1+2, y0+2, z0+2);
-  add_edge(edges, x1, y1, z0, x1+2, y1+2, z0+2);
-  add_edge(edges, x0, y1, z0, x0+2, y1+2, z0+2);
+  struct matrix* points = new_matrix(4, 8);
+  points->lastcol = 0;
+  add_point(points, xA, yA, zA);
+  add_point(points, xA, yA, zB);
+  add_point(points, xB, yA, zB);
+  add_point(points, xB, yA, zA);
+  add_point(points, xA, yB, zA);
+  add_point(points, xA, yB, zB);
+  add_point(points, xB, yB, zB);
+  add_point(points, xB, yB, zA);
 
-  //back
-  add_edge(edges, x0, y0, z1, x0+2, y0+2, z1+2);
-  add_edge(edges, x1, y0, z1, x1+2, y0+2, z1+2);
-  add_edge(edges, x1, y1, z1, x1+2, y1+2, z1+2);
-  add_edge(edges, x0, y1, z1, x0+2, y1+2, z1+2);
+  //top face
+  int c = 0;
+  for(; c < 4; c += 2)
+  {
+    int i1 = c;
+    int i2 = c + 1;
+    int i3 = (c + 2) % 4;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_edge(edges, x1, y1, z1, x2, y2, z2);
+    add_edge(edges, x1, y1, z1, x3, y3, z3);
+    add_edge(edges, x2, y2, z2, x3, y3, z3);
+  }
+
+  for(; c < 8; c += 2)
+  {
+    int i1 = c;
+    int i2 = c + 1;
+    int i3 = (c + 2) % 4 + 4;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_edge(edges, x1, y1, z1, x2, y2, z2);
+    add_edge(edges, x1, y1, z1, x3, y3, z3);
+    add_edge(edges, x2, y2, z2, x3, y3, z3);
+  }
+
+
+
+  int num_steps = 4;
+  int i = 0;
+  for(; i < num_steps; i++)
+  {
+    int i1 = i;
+    int i2 = (i + 1) % num_steps;
+    int i3 = i + num_steps;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_edge(edges, x1, y1, z1, x2, y2, z2);
+    add_edge(edges, x1, y1, z1, x3, y3, z3);
+    add_edge(edges, x2, y2, z2, x3, y3, z3);
+  }
+
+  i = 4;
+  for(; i < 2 * num_steps; i++)
+  {
+    int i1 = i;
+    int i2 = (i + 1); i2 %= num_steps; i2 += num_steps;
+    int i3 = (i + 1) + num_steps; i3 %= num_steps;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_edge(edges, x1, y1, z1, x2, y2, z2);
+    add_edge(edges, x1, y1, z1, x3, y3, z3);
+    add_edge(edges, x2, y2, z2, x3, y3, z3);
+  }
+
+
+  free_matrix(points);
+
 }
 
 /*======== void add_sphere() ==========
@@ -128,9 +242,9 @@ void add_sphere( struct matrix * edges,
 		 double cx, double cy, double cz,
 		 double r, double step ) {
 
-  struct matrix *points = generate_sphere(cx, cy, cz, r, step);
-  int num_steps = (int)(1/step +0.1);
-  int index, lat, longt;
+  struct matrix* points = generate_sphere(cx, cy, cz, r, step);
+  int num_steps = (int) (1/step + 0.1);
+  int lat, longt;
   int latStop, longStop, latStart, longStart;
   latStart = 0;
   latStop = num_steps;
@@ -138,19 +252,61 @@ void add_sphere( struct matrix * edges,
   longStop = num_steps;
 
   num_steps++;
-  for ( lat = latStart; lat < latStop; lat++ ) {
-    for ( longt = longStart; longt <= longStop; longt++ ) {
+  for(lat = latStart; lat < latStop; lat++)
+  {
+    for(longt = longStart; longt <= longStop; longt++)
+    {
+      //ADDRESS ISSUE OF I2 AND I3 GOING BEYOND THE POINT MATRIX LENGTH AND WRAPPING AROUND
 
-      index = lat * (num_steps) + longt;
-      add_edge( edges, points->m[0][index],
-		points->m[1][index],
-		points->m[2][index],
-		points->m[0][index] + 1,
-		points->m[1][index] + 1,
-		points->m[2][index] + 1);
+      //PART1
+      int i1 = lat * (num_steps) + longt;
+      int i2 = i1 + 1;
+      int i3 = (i2 + num_steps) % (points->lastcol);
+
+      //p1
+      double x1 = points->m[0][i1];
+      double y1 = points->m[1][i1];
+      double z1 = points->m[2][i1];
+
+      //p2
+      double x2 = points->m[0][i2];
+      double y2 = points->m[1][i2];
+      double z2 = points->m[2][i2];
+
+      //p3
+      double x3 = points->m[0][i3];
+      double y3 = points->m[1][i3];
+      double z3 = points->m[2][i3];
+
+      add_edge(edges, x1, y1, z1, x2, y2, z2);
+      add_edge(edges, x1, y1, z1, x3, y3, z3);
+      add_edge(edges, x2, y2, z2, x3, y3, z3);
+
+      //PART2
+      i1 = lat * (num_steps) + longt;
+      i2 = (i1 + num_steps) % (points->lastcol);
+      i3 = (i2 + 1) % (points->lastcol);
+
+      //p1
+      x1 = points->m[0][i1];
+      y1 = points->m[1][i1];
+      z1 = points->m[2][i1];
+
+      //p2
+      x2 = points->m[0][i2];
+      y2 = points->m[1][i2];
+      z2 = points->m[2][i2];
+
+      //p3
+      x3 = points->m[0][i3];
+      y3 = points->m[1][i3];
+      z3 = points->m[2][i3];
+
+      add_edge(edges, x1, y1, z1, x2, y2, z2);
+      add_edge(edges, x1, y1, z1, x3, y3, z3);
+      add_edge(edges, x2, y2, z2, x3, y3, z3);
     }
-  }  
-  free_matrix(points);
+  }
 }
 
 /*======== void generate_sphere() ==========
@@ -220,7 +376,7 @@ void add_torus( struct matrix * edges,
 		double cx, double cy, double cz,
 		double r1, double r2, double step ) {
   
-  struct matrix *points = generate_torus(cx, cy, cz, r1, r2, step);
+    struct matrix *points = generate_torus(cx, cy, cz, r1, r2, step);
   int num_steps = (int)(1/step +0.1);
   int index, lat, longt;
   int latStop, longStop, latStart, longStart;
