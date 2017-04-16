@@ -130,9 +130,7 @@ void add_box( struct matrix * edges,
     double y3 = points->m[1][i3];
     double z3 = points->m[2][i3];
 
-    add_edge(edges, x1, y1, z1, x2, y2, z2);
-    add_edge(edges, x1, y1, z1, x3, y3, z3);
-    add_edge(edges, x2, y2, z2, x3, y3, z3);
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
   for(; c < 8; c += 2)
@@ -156,9 +154,7 @@ void add_box( struct matrix * edges,
     double y3 = points->m[1][i3];
     double z3 = points->m[2][i3];
 
-    add_edge(edges, x1, y1, z1, x2, y2, z2);
-    add_edge(edges, x1, y1, z1, x3, y3, z3);
-    add_edge(edges, x2, y2, z2, x3, y3, z3);
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
 
@@ -186,9 +182,7 @@ void add_box( struct matrix * edges,
     double y3 = points->m[1][i3];
     double z3 = points->m[2][i3];
 
-    add_edge(edges, x1, y1, z1, x2, y2, z2);
-    add_edge(edges, x1, y1, z1, x3, y3, z3);
-    add_edge(edges, x2, y2, z2, x3, y3, z3);
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
   i = 4;
@@ -213,9 +207,7 @@ void add_box( struct matrix * edges,
     double y3 = points->m[1][i3];
     double z3 = points->m[2][i3];
 
-    add_edge(edges, x1, y1, z1, x2, y2, z2);
-    add_edge(edges, x1, y1, z1, x3, y3, z3);
-    add_edge(edges, x2, y2, z2, x3, y3, z3);
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
 
@@ -278,9 +270,7 @@ void add_sphere( struct matrix * edges,
       double y3 = points->m[1][i3];
       double z3 = points->m[2][i3];
 
-      add_edge(edges, x1, y1, z1, x2, y2, z2);
-      add_edge(edges, x1, y1, z1, x3, y3, z3);
-      add_edge(edges, x2, y2, z2, x3, y3, z3);
+      add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 
       //PART2
       i1 = lat * (num_steps) + longt;
@@ -302,9 +292,7 @@ void add_sphere( struct matrix * edges,
       y3 = points->m[1][i3];
       z3 = points->m[2][i3];
 
-      add_edge(edges, x1, y1, z1, x2, y2, z2);
-      add_edge(edges, x1, y1, z1, x3, y3, z3);
-      add_edge(edges, x2, y2, z2, x3, y3, z3);
+      add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
     }
   }
 }
@@ -409,9 +397,7 @@ void add_torus( struct matrix * edges,
       double y3 = points->m[1][i3];
       double z3 = points->m[2][i3];
 
-      add_edge(edges, x1, y1, z1, x2, y2, z2);
-      add_edge(edges, x1, y1, z1, x3, y3, z3);
-      add_edge(edges, x2, y2, z2, x3, y3, z3);
+      add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 
       //PART 2
       i1 = lat * (num_steps) + longt;
@@ -433,32 +419,11 @@ void add_torus( struct matrix * edges,
       y3 = points->m[1][i3];
       z3 = points->m[2][i3];
 
-      add_edge(edges, x1, y1, z1, x2, y2, z2);
-      add_edge(edges, x1, y1, z1, x3, y3, z3);
-      add_edge(edges, x2, y2, z2, x3, y3, z3);
-
-      
+      add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
     }
   }
 
-
-
-  /*
-  
-  for ( lat = latStart; lat < latStop; lat++ ) {
-    for ( longt = longStart; longt < longStop; longt++ ) {
-      
-      index = lat * (num_steps) + longt;
-      add_edge( edges, points->m[0][index],
-		points->m[1][index],
-		points->m[2][index],
-		points->m[0][index] + 1,
-		points->m[1][index] + 1,
-		points->m[2][index] + 1);
-    }
-  }  
   free_matrix(points);
-  */
 }
 
 

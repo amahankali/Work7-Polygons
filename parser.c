@@ -9,6 +9,10 @@
 #include "matrix.h"
 #include "parser.h"
 
+//FOR DRAWING POLYGONS - USE TWO MATRICES - ONE FOR EDGES AND ONE FOR TRIANGLES. THIS WAY YOU CAN HAVE
+//BOTH CURVES AND SURFACES
+//FIX THE PROBLEM OF AN ADDITIONAL TRIANGLE BEING DRAWN IN A RANDOM PLACE IN SPACE
+
 
 /*======== void parse_file () ==========
 Inputs:   char * filename 
@@ -231,7 +235,8 @@ void parse_file ( char * filename,
     else if ( strncmp(line, "display", strlen(line)) == 0 ) {
       //printf("DISPLAY\t%s", line);
       clear_screen(s);
-      draw_lines(edges, s, c);
+      draw_polygons(edges, s, c);
+      //draw_lines(edges, s, c);
       display( s );
     }//end display
 
