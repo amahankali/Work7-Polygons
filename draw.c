@@ -23,10 +23,7 @@ Adds the vertices (x0, y0, z0), (x1, y1, z1)
 and (x2, y2, z2) to the polygon matrix. They
 define a single triangle surface.
 ====================*/
-void add_polygon( struct matrix *polygons, 
-		  double x0, double y0, double z0, 
-		  double x1, double y1, double z1, 
-		  double x2, double y2, double z2 ) {
+void add_polygon( struct matrix *polygons, double x0, double y0, double z0, double x1, double y1, double z1, double x2, double y2, double z2 ) {
   add_point(polygons, x0, y0, z0);
   add_point(polygons, x1, y1, z1);
   add_point(polygons, x2, y2, z2);
@@ -44,7 +41,7 @@ triangles
 void draw_polygons( struct matrix *polygons, screen s, color c ) {
 
   int i = 0;
-  for(; i <= polygons->lastcol; i += 3)
+  for(; i < polygons->lastcol; i += 3)
   {
     double x0, y0, z0;
     x0 = polygons->m[0][i];
@@ -308,8 +305,7 @@ void add_sphere( struct matrix * edges,
 	   radius r.
 	   Returns a matrix of those points
   ====================*/
-struct matrix * generate_sphere(double cx, double cy, double cz,
-				double r, double step ) {
+struct matrix * generate_sphere(double cx, double cy, double cz, double r, double step ) {
 
   int num_steps = (int)(1/step +0.1);
   
@@ -439,8 +435,7 @@ void add_torus( struct matrix * edges,
 	   radii r1 and r2.
 	   Returns a matrix of those points
   ====================*/
-struct matrix * generate_torus( double cx, double cy, double cz,
-				double r1, double r2, double step ) {
+struct matrix * generate_torus( double cx, double cy, double cz, double r1, double r2, double step ) {
   int num_steps = (int)(1/step +0.1);
   
   struct matrix *points = new_matrix(4, num_steps * num_steps);
@@ -483,9 +478,7 @@ struct matrix * generate_torus( double cx, double cy, double cz,
 
   Adds the circle at (cx, cy) with radius r to edges
   ====================*/
-void add_circle( struct matrix * edges, 
-		 double cx, double cy, double cz,
-		 double r, double step ) {
+void add_circle( struct matrix * edges, double cx, double cy, double cz, double r, double step ) {
   
   double x0, y0, x1, y1, t;
 
@@ -520,12 +513,7 @@ Adds the curve bounded by the 4 points passsed as parameters
 of type specified in type (see matrix.h for curve type constants)
 to the matrix points
 ====================*/
-void add_curve( struct matrix *edges, 
-		double x0, double y0, 
-		double x1, double y1, 
-		double x2, double y2, 
-		double x3, double y3, 
-		double step, int type ) {
+void add_curve( struct matrix *edges, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double step, int type ) {
 
   double t, x, y; 
   struct matrix *xcoefs;
