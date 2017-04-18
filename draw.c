@@ -253,8 +253,9 @@ void add_sphere( struct matrix * edges, double cx, double cy, double cz, double 
   {
     for(longt = longStart; longt <= longStop; longt++)
     {
-      //PART1
+      //Some extra edges are appearing near one of the poles, and there is an extra edge between the two poles.
 
+      //PART1
       int i1 = lat * num_steps + longt; i1 %= points->lastcol;
       int i2 = i1 + 1; i2 %= points->lastcol;
       int i3 = i1 + num_steps + 1; i3 %= points->lastcol;
@@ -381,8 +382,8 @@ void add_torus( struct matrix * edges, double cx, double cy, double cz, double r
     {
       //PART 1
       int i1 = lat * num_steps + longt;
-      int i2 = i1 + 1; i2 %= points->lastcol;
-      int i3 = i1 + num_steps + 1; i3 %= points->lastcol;
+      int i2 = i1 + num_steps + 1; i2 %= points->lastcol;
+      int i3 = i1 + 1; i3 %= points->lastcol;
 
       //p1
       double x1 = points->m[0][i1];
