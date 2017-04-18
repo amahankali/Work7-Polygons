@@ -58,9 +58,22 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
     y2 = polygons->m[1][i + 2];
     z2 = polygons->m[2][i + 2];
 
-    draw_line(x0, y0, x1, y1, s, c);
-    draw_line(x0, y0, x2, y2, s, c);
-    draw_line(x1, y1, x2, y2, s, c);
+    //determine if polygon should be drawn
+    double ax = (x1 - x0);
+    double ay = (y1 - y0);
+
+    double bx = (x2 - x0);
+    double by = (y2 - y0);
+
+    //z component of cross product - dot product of normal vector and view vector <0, 0, 1>
+    double cz = ax * by - ay * bx;
+
+    if(cz >= 0)
+    {
+      draw_line(x0, y0, x1, y1, s, c);
+      draw_line(x0, y0, x2, y2, s, c);
+      draw_line(x1, y1, x2, y2, s, c);
+    }
   }
 
 
@@ -108,8 +121,8 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
   for(; c < num_steps; c += 2)
   {
     int i1 = c;
-    int i2 = (c + 1) % num_steps;
-    int i3 = (c + 2) % num_steps;
+    int i2 = (c + 2) % num_steps;
+    int i3 = (c + 1) % num_steps;
 
     //p1
     double x1 = points->m[0][i1];
@@ -129,6 +142,7 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
     add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
+  //bottom face
   for(; c < 2 * num_steps; c += 2)
   {
     int i1 = c;
@@ -159,6 +173,31 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
   {
     int i1 = i;
     int i2 = (i + 1) % num_steps;
+    int i3 = (i + 1) % num_steps + num_steps;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+  }
+
+  i = 0;
+  for(; i < num_steps; i++)
+  {
+    int i1 = i;
+    int i2 = (i + 1) % num_steps + num_steps;
     int i3 = i + num_steps;
 
     //p1
@@ -178,31 +217,6 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
 
     add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
-
-  for(; i < 2 * num_steps; i++)
-  {
-    int i1 = i;
-    int i2 = (i + 1) % num_steps + num_steps;
-    int i3 = (i + 1) % num_steps;
-
-    //p1
-    double x1 = points->m[0][i1];
-    double y1 = points->m[1][i1];
-    double z1 = points->m[2][i1];
-
-    //p2
-    double x2 = points->m[0][i2];
-    double y2 = points->m[1][i2];
-    double z2 = points->m[2][i2];
-
-    //p3
-    double x3 = points->m[0][i3];
-    double y3 = points->m[1][i3];
-    double z3 = points->m[2][i3];
-
-    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-  }
-
 
   free_matrix(points);
 
@@ -239,11 +253,10 @@ void add_sphere( struct matrix * edges, double cx, double cy, double cz, double 
   {
     for(longt = longStart; longt <= longStop; longt++)
     {
-      //ADDRESS ISSUE OF I2 AND I3 GOING BEYOND THE POINT MATRIX LENGTH AND WRAPPING AROUND
-
       //PART1
-      int i1 = lat * num_steps + longt;
-      int i2 = i1 + 1; i2 %= points->lastcol; 
+
+      int i1 = lat * num_steps + longt; i1 %= points->lastcol;
+      int i2 = i1 + 1; i2 %= points->lastcol;
       int i3 = i1 + num_steps + 1; i3 %= points->lastcol;
 
       //p1
@@ -265,9 +278,9 @@ void add_sphere( struct matrix * edges, double cx, double cy, double cz, double 
 
       //PART2
 
-      i1 = lat * num_steps + longt;
-      i2 = i1 + num_steps; i2 %= points->lastcol; 
-      i3 = i1 + num_steps + 1; i3 %= points->lastcol;
+      i1 = lat * num_steps + longt; i1 %= points->lastcol;
+      i2 = i1 + num_steps + 1; i2 %= points->lastcol;
+      i3 = i1 + num_steps; i3 %= points->lastcol;
 
       //p1
       x1 = points->m[0][i1];
@@ -564,9 +577,7 @@ Returns:
 add the line connecting (x0, y0, z0) to (x1, y1, z1) to points
 should use add_point
 ====================*/
-void add_edge( struct matrix * points, 
-	       double x0, double y0, double z0, 
-	       double x1, double y1, double z1) {
+void add_edge( struct matrix * points, double x0, double y0, double z0, double x1, double y1, double z1) {
   add_point( points, x0, y0, z0 );
   add_point( points, x1, y1, z1 );
 }
