@@ -81,9 +81,7 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
   upper-left corner is (x, y, z) with width, 
   height and depth dimensions.
   ====================*/
-void add_box( struct matrix * edges,
-	      double x, double y, double z,
-	      double width, double height, double depth ) {
+void add_box( struct matrix * edges, double x, double y, double z, double width, double height, double depth ) {
 
   double xA, yA, zA, xB, yB, zB;
   xA = x;
@@ -106,57 +104,56 @@ void add_box( struct matrix * edges,
 
   //top face
   int c = 0;
-  for(; c < 4; c += 2)
-  {
-    int i1 = c;
-    int i2 = c + 1;
-    int i3 = (c + 2) % 4;
-
-    //p1
-    double x1 = points->m[0][i1];
-    double y1 = points->m[1][i1];
-    double z1 = points->m[2][i1];
-
-    //p2
-    double x2 = points->m[0][i2];
-    double y2 = points->m[1][i2];
-    double z2 = points->m[2][i2];
-
-    //p3
-    double x3 = points->m[0][i3];
-    double y3 = points->m[1][i3];
-    double z3 = points->m[2][i3];
-
-    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-  }
-
-  for(; c < 8; c += 2)
-  {
-    int i1 = c;
-    int i2 = c + 1;
-    int i3 = (c + 2) % 4 + 4;
-
-    //p1
-    double x1 = points->m[0][i1];
-    double y1 = points->m[1][i1];
-    double z1 = points->m[2][i1];
-
-    //p2
-    double x2 = points->m[0][i2];
-    double y2 = points->m[1][i2];
-    double z2 = points->m[2][i2];
-
-    //p3
-    double x3 = points->m[0][i3];
-    double y3 = points->m[1][i3];
-    double z3 = points->m[2][i3];
-
-    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-  }
-
-
-
   int num_steps = 4;
+  for(; c < num_steps; c += 2)
+  {
+    int i1 = c;
+    int i2 = (c + 1) % num_steps;
+    int i3 = (c + 2) % num_steps;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+  }
+
+  for(; c < 2 * num_steps; c += 2)
+  {
+    int i1 = c;
+    int i2 = (c + 1) % num_steps + num_steps;
+    int i3 = (c + 2) % num_steps + num_steps;
+
+    //p1
+    double x1 = points->m[0][i1];
+    double y1 = points->m[1][i1];
+    double z1 = points->m[2][i1];
+
+    //p2
+    double x2 = points->m[0][i2];
+    double y2 = points->m[1][i2];
+    double z2 = points->m[2][i2];
+
+    //p3
+    double x3 = points->m[0][i3];
+    double y3 = points->m[1][i3];
+    double z3 = points->m[2][i3];
+
+    add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+  }
+
+  //side faces
   int i = 0;
   for(; i < num_steps; i++)
   {
@@ -182,12 +179,11 @@ void add_box( struct matrix * edges,
     add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
-  i = 4;
   for(; i < 2 * num_steps; i++)
   {
     int i1 = i;
-    int i2 = (i + 1); i2 %= num_steps; i2 += num_steps;
-    int i3 = (i + 1) + num_steps; i3 %= num_steps;
+    int i2 = (i + 1) % num_steps + num_steps;
+    int i3 = (i + 1) % num_steps;
 
     //p1
     double x1 = points->m[0][i1];
@@ -227,9 +223,7 @@ void add_box( struct matrix * edges,
   should call generate_sphere to create the
   necessary points
   ====================*/
-void add_sphere( struct matrix * edges, 
-		 double cx, double cy, double cz,
-		 double r, double step ) {
+void add_sphere( struct matrix * edges, double cx, double cy, double cz, double r, double step ) {
 
   struct matrix* points = generate_sphere(cx, cy, cz, r, step);
   int num_steps = (int) (1/step + 0.1);
@@ -248,9 +242,9 @@ void add_sphere( struct matrix * edges,
       //ADDRESS ISSUE OF I2 AND I3 GOING BEYOND THE POINT MATRIX LENGTH AND WRAPPING AROUND
 
       //PART1
-      int i1 = lat * (num_steps) + longt;
-      int i2 = (i1 + 1) % (points->lastcol);
-      int i3 = (i2 + num_steps) % (points->lastcol);
+      int i1 = lat * num_steps + longt;
+      int i2 = i1 + 1; i2 %= points->lastcol; 
+      int i3 = i1 + num_steps + 1; i3 %= points->lastcol;
 
       //p1
       double x1 = points->m[0][i1];
@@ -270,9 +264,10 @@ void add_sphere( struct matrix * edges,
       add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 
       //PART2
-      i1 = lat * (num_steps) + longt;
-      i2 = (i1 + num_steps) % (points->lastcol);
-      i3 = (i2 + 1) % (points->lastcol);
+
+      i1 = lat * num_steps + longt;
+      i2 = i1 + num_steps; i2 %= points->lastcol; 
+      i3 = i1 + num_steps + 1; i3 %= points->lastcol;
 
       //p1
       x1 = points->m[0][i1];
@@ -356,9 +351,7 @@ struct matrix * generate_sphere(double cx, double cy, double cz, double r, doubl
   should call generate_torus to create the
   necessary points
   ====================*/
-void add_torus( struct matrix * edges, 
-		double cx, double cy, double cz,
-		double r1, double r2, double step ) {
+void add_torus( struct matrix * edges, double cx, double cy, double cz, double r1, double r2, double step ) {
   
   struct matrix *points = generate_torus(cx, cy, cz, r1, r2, step);
   int num_steps = (int) (1/step + 0.1);
@@ -374,9 +367,9 @@ void add_torus( struct matrix * edges,
     for(longt = longStart; longt < longStop; longt++)
     {
       //PART 1
-      int i1 = lat * (num_steps) + longt;
-      int i2 = (i1 + 1) % (points->lastcol);
-      int i3 = (i2 + num_steps) % (points->lastcol);
+      int i1 = lat * num_steps + longt;
+      int i2 = i1 + 1; i2 %= points->lastcol;
+      int i3 = i1 + num_steps + 1; i3 %= points->lastcol;
 
       //p1
       double x1 = points->m[0][i1];
@@ -396,9 +389,9 @@ void add_torus( struct matrix * edges,
       add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 
       //PART 2
-      i1 = lat * (num_steps) + longt;
-      i2 = (i1 + num_steps) % (points->lastcol);
-      i3 = (i2 + 1) % (points->lastcol);
+      i1 = lat * num_steps + longt;
+      i2 = i1 + num_steps; i2 %= points->lastcol;
+      i3 = i1 + num_steps + 1; i3 %= points->lastcol;
 
       //p1
       x1 = points->m[0][i1];
