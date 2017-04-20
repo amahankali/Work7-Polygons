@@ -9,11 +9,6 @@
 #include "matrix.h"
 #include "parser.h"
 
-//FOR DRAWING POLYGONS - USE TWO MATRICES - ONE FOR EDGES AND ONE FOR TRIANGLES. THIS WAY YOU CAN HAVE
-//BOTH CURVES AND SURFACES
-//FIX THE PROBLEM OF AN ADDITIONAL TRIANGLE BEING DRAWN IN A RANDOM PLACE IN SPACE
-
-
 /*======== void parse_file () ==========
 Inputs:   char * filename 
           struct matrix * transform, 
@@ -100,7 +95,7 @@ void parse_file ( char * filename,
     double theta;
     char axis;
     int type;
-    double step = 0.05;
+    double step = 0.06;
 
     if ( strncmp(line, "box", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
