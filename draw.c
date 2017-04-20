@@ -253,6 +253,8 @@ void add_sphere( struct matrix * edges, double cx, double cy, double cz, double 
   {
     for(longt = longStart; longt < longStop; longt++)
     {
+      //There seem to be some extra edges near the pole - not sure how to resolve.
+
       //PART1
       int i1 = lat * num_steps + longt; i1 %= points->lastcol;
       int i2 = i1 + 1; i2 %= points->lastcol;
