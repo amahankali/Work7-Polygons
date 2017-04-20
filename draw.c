@@ -253,7 +253,7 @@ void add_sphere( struct matrix * edges, double cx, double cy, double cz, double 
   {
     for(longt = longStart; longt < longStop; longt++)
     {
-      //Some extra edges are appearing near one of the poles, and there is an extra edge between the two poles.
+      //Some extra edges are appearing near one of the poles.
 
       //PART1
       int i1 = lat * num_steps + longt; i1 %= points->lastcol;

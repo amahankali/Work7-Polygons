@@ -231,8 +231,8 @@ void parse_file ( char * filename,
     
     else if ( strncmp(line, "apply", strlen(line)) == 0 ) {
       //printf("APPLY\t%s", line);
-      matrix_mult(transform, edges);
-      matrix_mult(transform, polygons);
+      if(edges->lastcol >= 2) matrix_mult(transform, edges);
+      if(polygons->lastcol >= 3) matrix_mult(transform, polygons);
     }//end apply
     
     else if ( strncmp(line, "display", strlen(line)) == 0 ) {
