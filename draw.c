@@ -459,8 +459,8 @@ struct matrix * generate_torus( double cx, double cy, double cz, double r1, doub
       y = r1 * sin(2*M_PI * circ) + cy;
       z = -1*sin(2*M_PI * rot) * (r1 * cos(2*M_PI * circ) + r2) + cz;
       
-      printf("rotation: %d\tcircle: %d\n", rotation, circle);
-      printf("torus point: (%0.2f, %0.2f, %0.2f)\n", x, y, z);
+      //printf("rotation: %d\tcircle: %d\n", rotation, circle);
+      //printf("torus point: (%0.2f, %0.2f, %0.2f)\n", x, y, z);
       add_point(points, x, y, z);
     }
   }
