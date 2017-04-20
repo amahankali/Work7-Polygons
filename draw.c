@@ -121,7 +121,7 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
   for(; c < num_steps; c += 2)
   {
     int i1 = c;
-    int i2 = (c + 2) % num_steps;
+    int i2 = (c + num_steps - 1) % num_steps;
     int i3 = (c + 1) % num_steps;
 
     //p1
@@ -147,7 +147,7 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
   {
     int i1 = c;
     int i2 = (c + 1) % num_steps + num_steps;
-    int i3 = (c + 2) % num_steps + num_steps;
+    int i3 = (c + num_steps - 1) % num_steps + num_steps;
 
     //p1
     double x1 = points->m[0][i1];
@@ -173,7 +173,7 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
   {
     int i1 = i;
     int i2 = (i + 1) % num_steps;
-    int i3 = (i + 1) % num_steps + num_steps;
+    int i3 = i + num_steps;
 
     //p1
     double x1 = points->m[0][i1];
@@ -197,8 +197,8 @@ void add_box( struct matrix * edges, double x, double y, double z, double width,
   for(; i < num_steps; i++)
   {
     int i1 = i;
-    int i2 = (i + 1) % num_steps + num_steps;
-    int i3 = i + num_steps;
+    int i2 = i + num_steps;
+    int i3 = (i - 1 + num_steps) % num_steps + num_steps;
 
     //p1
     double x1 = points->m[0][i1];
@@ -278,7 +278,6 @@ void add_sphere( struct matrix * edges, double cx, double cy, double cz, double 
       add_polygon(edges, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 
       //PART2
-
       i1 = lat * num_steps + longt; i1 %= points->lastcol;
       i2 = i1 + num_steps + 1; i2 %= points->lastcol;
       i3 = i1 + num_steps; i3 %= points->lastcol;
@@ -334,14 +333,12 @@ struct matrix * generate_sphere(double cx, double cy, double cz, double r, doubl
       circ = (double)circle / num_steps;
 
       x = r * cos(M_PI * circ) + cx;
-      y = r * sin(M_PI * circ) *
-	cos(2*M_PI * rot) + cy;
-      z = r * sin(M_PI * circ) *
-	sin(2*M_PI * rot) + cz;
+      y = r * sin(M_PI * circ) * cos(2*M_PI * rot) + cy;
+      z = r * sin(M_PI * circ) * sin(2*M_PI * rot) + cz;
       
-      /* printf("rotation: %d\tcircle: %d\n", rotation, circle); */
-      /* printf("rot: %lf\tcirc: %lf\n", rot, circ); */
-      /* printf("sphere point: (%0.2f, %0.2f, %0.2f)\n\n", x, y, z); */
+      // printf("rotation: %d\tcircle: %d\n", rotation, circle);
+      // printf("rot: %lf\tcirc: %lf\n", rot, circ);
+      // printf("sphere point: (%0.2f, %0.2f, %0.2f)\n\n", x, y, z);
       add_point(points, x, y, z);
     }
   }
@@ -382,8 +379,8 @@ void add_torus( struct matrix * edges, double cx, double cy, double cz, double r
     {
       //PART 1
       int i1 = lat * num_steps + longt;
-      int i2 = i1 + num_steps + 1; i2 %= points->lastcol;
-      int i3 = i1 + 1; i3 %= points->lastcol;
+      int i2 = (i1 + 1) % num_steps + lat * num_steps;
+      int i3 = (i1 + num_steps + 1) % num_steps + (lat + 1) * num_steps; i3 %= points->lastcol;
 
       //p1
       double x1 = points->m[0][i1];
@@ -404,8 +401,8 @@ void add_torus( struct matrix * edges, double cx, double cy, double cz, double r
 
       //PART 2
       i1 = lat * num_steps + longt;
-      i2 = i1 + num_steps; i2 %= points->lastcol;
-      i3 = i1 + num_steps + 1; i3 %= points->lastcol;
+      i2 = (i1 + num_steps + 1) % num_steps + (lat + 1) * num_steps; i2 %= points->lastcol;
+      i3 = (i1 + num_steps) % num_steps + (lat + 1) * num_steps; i3 %= points->lastcol;
 
       //p1
       x1 = points->m[0][i1];
@@ -460,14 +457,12 @@ struct matrix * generate_torus( double cx, double cy, double cz, double r1, doub
     for(circle = circ_start; circle < circ_stop; circle++){
       circ = (double)circle / num_steps;
 
-      x = cos(2*M_PI * rot) *
-	(r1 * cos(2*M_PI * circ) + r2) + cx;
+      x = cos(2*M_PI * rot) * (r1 * cos(2*M_PI * circ) + r2) + cx;
       y = r1 * sin(2*M_PI * circ) + cy;
-      z = -1*sin(2*M_PI * rot) *
-	(r1 * cos(2*M_PI * circ) + r2) + cz;
+      z = -1*sin(2*M_PI * rot) * (r1 * cos(2*M_PI * circ) + r2) + cz;
       
-      //printf("rotation: %d\tcircle: %d\n", rotation, circle);
-      //printf("torus point: (%0.2f, %0.2f, %0.2f)\n", x, y, z);
+      printf("rotation: %d\tcircle: %d\n", rotation, circle);
+      printf("torus point: (%0.2f, %0.2f, %0.2f)\n", x, y, z);
       add_point(points, x, y, z);
     }
   }
